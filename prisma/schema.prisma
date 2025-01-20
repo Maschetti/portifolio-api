@@ -17,7 +17,7 @@ model Project {
   link         String         @unique
   lastTime     DateTime
   isMain       Boolean        @default(false)
-  ProjectTechs ProjectTechs[]
+  projectTechs ProjectTechs[]
 
   @@map("projects")
 }
@@ -25,17 +25,17 @@ model Project {
 model Tech {
   id           String         @id @default(uuid())
   name         String         @unique
-  ProjectTechs ProjectTechs[]
+  projectTechs ProjectTechs[]
 
   @@map("techs")
 }
 
 model ProjectTechs {
-  projectId String
-  techId    String
+  projectName String
+  techName    String
 
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tech    Tech    @relation(fields: [techId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectName], references: [name], onDelete: Cascade)
+  tech    Tech    @relation(fields: [techName], references: [name], onDelete: Cascade)
 
-  @@id([projectId, techId])
+  @@id([projectName, techName])
 }
