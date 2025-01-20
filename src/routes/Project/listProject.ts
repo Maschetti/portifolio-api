@@ -33,12 +33,24 @@ export async function listProject(app: FastifyInstance) {
       },
       take: number ?? undefined,
       include: {
-        projectTechs: true // Include related techs
+        projectTechs: {
+          select: {
+            techName: true,
+          },
+          orderBy: {
+            techName: 'asc'
+          }
+        }
       }
     })
 
     if(!projects) return 'Projects not found'
 
-    return projects
+
+    // retrun projecTechs as an String[] instead of Object[]
+    return projects.map(project => ({
+      ...project,
+      projectTechs: project.projectTechs.map(tech => tech.techName),
+    }));
   })
 }
