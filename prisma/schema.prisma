@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id           String         @id @default(uuid())
+  name         String         @unique
+  description  String
+  link         String         @unique
+  lastTime     DateTime
+  isMain       Boolean        @default(false)
+  ProjectTechs ProjectTechs[]
+
+  @@map("projects")
+}
+
+model Tech {
+  id           String         @id @default(uuid())
+  name         String         @unique
+  ProjectTechs ProjectTechs[]
+
+  @@map("techs")
+}
+
+model ProjectTechs {
+  projectId String
+  techId    String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tech    Tech    @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, techId])
+}
