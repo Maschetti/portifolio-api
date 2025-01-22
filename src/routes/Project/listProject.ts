@@ -33,6 +33,7 @@ export async function listProject(app: FastifyInstance) {
       },
       take: number ?? undefined,
       include: {
+        image: true,
         projectTechs: {
           select: {
             techName: true,
