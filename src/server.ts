@@ -1,6 +1,9 @@
 import { fastifyMultipart } from '@fastify/multipart';
+import fastifyStatic from "@fastify/static";
 import fastify from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import path from 'path';
+import { readImage } from './routes/Image/readImage';
 import { addImageToProject } from './routes/Project/addImageToProject';
 import { createProject } from './routes/Project/createProject';
 import { deleteProject } from './routes/Project/deleteProject';
@@ -17,6 +20,9 @@ app.setSerializerCompiler(serializerCompiler);
 
 // Multipart to accept files upload
 app.register(fastifyMultipart)
+app.register(fastifyStatic, {
+  root: path.join(__dirname, './utils/images')
+})
 
 // Project section
 app.register(createProject)
@@ -29,6 +35,9 @@ app.register(addImageToProject)
 app.register(createTech)
 app.register(listTech)
 app.register(clearTech)
+
+// Image section
+app.register(readImage)
 
 
 app.listen({port: 3333}).then(() => {

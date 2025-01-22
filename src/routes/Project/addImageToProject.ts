@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import fs from "fs";
-import path from "path";
 import z from 'zod';
 import { prisma } from "../../lib/prisma";
 
@@ -29,25 +28,18 @@ export async function addImageToProject(app: FastifyInstance) {
 
     if(!project) return 'Project not found'
 
-    const uploadDir = path.join(__dirname, "../../utils/images");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const filePath = path.join(uploadDir, data.filename);
 
     // Save the file to the directory
     await new Promise<void>((resolve, reject) => {
-      const writeStream = fs.createWriteStream(filePath);
+      const writeStream = fs.createWriteStream(data.filename);
       data.file.pipe(writeStream);
       data.file.on("end", () => resolve());
       data.file.on("error", (err) => reject(err));
     });
-    
-    const relativeFilePath = `/utils/images/${data.filename}`
+
     const image = await prisma.image.create({
       data: {
-        filePath: relativeFilePath,
+        filePath: data.filename,
         project: {connect: {id: id}}
       }
     })
